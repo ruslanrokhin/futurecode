@@ -67,6 +67,31 @@ struct ArraySorter
         }
     }
 
+    int Partition(vector<int> &v, int start, int end) const {
+	
+	int pivot = end;
+	int j = start;
+	for(int i=start;i<end;++i){
+		if(v[i]<v[pivot]){
+			swap(v[i],v[j]);
+			++j;
+		}
+	}
+	swap(v[j],v[pivot]);
+	return j;
+	
+}
+
+void Quicksort(vector<int> &v, int start, int end ) const {
+
+	if(start<end){
+		int p = Partition(v,start,end);
+		Quicksort(v,start,p-1);
+		Quicksort(v,p+1,end);
+	}
+	
+}
+
     bool Check(const vector<int> &sorted) const
     {
         auto length = sorted.size();
@@ -104,16 +129,23 @@ void Timer(int number_of_method, const ArraySorter &arr)
         sort(copy.begin(), copy.end());
     }
     break;
+    case 4:
+    {
+        LOG_DURATION("Quicksort"s);
+        arr.Quicksort(copy, 0, copy.size() - 1);
+    }
+    break;
     default:
         break;
     }
     cout << arr.Check(copy) << endl;
 }
 
+
+
 int main(int argc, char const *argv[])
 {
-    ArraySorter arr(10000);
-    Timer(1, arr);
-    Timer(2, arr);
+    ArraySorter arr(10000000);
     Timer(3, arr);
+    Timer(4, arr);
 };
