@@ -1,0 +1,8 @@
+!*.cpp
+!*/*.cpp
+!*/*.h
+!*.h
+# *
+# module-2/a.exe
+*/*.exe
+*.rar
