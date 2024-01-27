@@ -6,3 +6,4 @@
 # module-2/a.exe
 */*.exe
 *.rar
+.vscode/
