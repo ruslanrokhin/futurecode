@@ -28,17 +28,71 @@ int Partition(vector<int> &v, int start, int end)
     return j;
 }
 
-void Quicksort(vector<int> &v, int start, int end)
+namespace MergeSort
 {
 
-    if (start < end)
+    void merge(vector<int> &list, int start, int end, int mid)
     {
-        int p = Partition(v, start, end);
-        Quicksort(v, start, p - 1);
-        Quicksort(v, p + 1, end);
+        static vector<int> mergedList(list.size());
+        int i, j, k;
+        i = start;
+        k = start;
+        j = mid + 1;
+
+        while (i <= mid && j <= end)
+        {
+            if (list[i] < list[j])
+            {
+                mergedList[k] = list[i];
+                k++;
+                i++;
+            }
+            else
+            {
+                mergedList[k] = list[j];
+                k++;
+                j++;
+            }
+        }
+
+        while (i <= mid)
+        {
+            mergedList[k] = list[i];
+            k++;
+            i++;
+        }
+
+        while (j <= end)
+        {
+            mergedList[k] = list[j];
+            k++;
+            j++;
+        }
+
+        for (i = start; i < k; i++)
+        {
+            list[i] = mergedList[i];
+        }
     }
+    void mergeSort(vector<int> &list, int start, int end)
+    {
+        int mid;
+        if (start < end)
+        {
+
+            mid = (start + end) / 2;
+            mergeSort(list, start, mid);
+            mergeSort(list, mid + 1, end);
+            merge(list, start, end, mid);
+        }
+    }
+
 }
 
+void MergeSortMetod(vector<int> &copy)
+{
+    MergeSort::mergeSort(copy, 0, copy.size() - 1);
+}
 void Print(const vector<int> &container_)
 {
     for (auto i = container_.cbegin(); i < container_.cend(); i++)
@@ -57,6 +111,6 @@ int main(int argc, char const *argv[])
     {
         cin >> v[i];
     }
-    Quicksort(v, 0, count - 1);
+    MergeSortMetod(v);
     Print(v);
 };

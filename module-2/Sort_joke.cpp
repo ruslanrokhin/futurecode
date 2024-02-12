@@ -45,7 +45,7 @@ void Timer(const vector<int> &arr, SORT_FUNCTION metod, const char * metod_name 
 }
 int main(int argc, char const *argv[])
 {
-    ArraySorter arr(100000000);
+    ArraySorter arr(10000000);
     Timer(arr.container_, MergeSortMetod, "MergeSort");
     Timer(arr.container_, StdSort, "StdSort");
     Timer(arr.container_, QuicksortMetod, "QuicksortMetod");
