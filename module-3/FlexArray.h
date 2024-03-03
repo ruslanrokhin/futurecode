@@ -6,8 +6,13 @@
 template <typename T>
 struct FlexArray
 {
-    FlexArray(unsigned size) : size_(size), arr_ptr_ (new T[size_])
-    {       
+
+    FlexArray()
+    {
+    }
+
+    FlexArray(unsigned size) : size_(size), arr_ptr_(new T[size_]())
+    {
     }
 
     FlexArray(FlexArray<T> &&other) : size_(other.size_), arr_ptr_(other.arr_ptr_)
@@ -15,9 +20,9 @@ struct FlexArray
         other.arr_ptr_ = nullptr;
     }
 
-    FlexArray(const FlexArray<T> &other) : size_(other.size_), arr_ptr_(new T[size_])
+    FlexArray(const FlexArray<T> &other) : size_(other.size_), arr_ptr_(new T[size_]())
     {
-         for (unsigned i = 0; i < size_; i++)
+        for (unsigned i = 0; i < size_; i++)
         {
             at(i) = other.at(i);
         }
@@ -27,7 +32,7 @@ struct FlexArray
     {
         if (arr_ptr_ != 0)
         {
-            delete arr_ptr_[];
+            delete[] arr_ptr_;
         }
     }
 
@@ -48,7 +53,7 @@ struct FlexArray
 
     FlexArray<T> &operator=(const FlexArray<T> &second)
     {
-        delete arr_ptr_;
+        delete [] arr_ptr_;
         size_ = second.Size();
         arr_ptr_ = new T[size_];
         for (unsigned i = 0; i < size_; i++)
@@ -60,7 +65,7 @@ struct FlexArray
 
     FlexArray<T> &operator=(FlexArray<T> &&second)
     {
-        delete arr_ptr_;
+        delete [] arr_ptr_;
         arr_ptr_ = second.arr_ptr_;
         second.arr_ptr_ = nullptr;
         return *this;
@@ -86,7 +91,7 @@ struct FlexArray
         {
             at(i) = second.at(j);
         }
-        delete tmp_ptr;
+        delete [] tmp_ptr;
         size_ = new_size;
         return *this;
     }
@@ -111,7 +116,7 @@ struct FlexArray
 
             at(i) = *(tmp_ptr + j);
         }
-        delete tmp_ptr;
+        delete [] tmp_ptr;
         size_ = new_size;
         return *this;
     }
@@ -119,16 +124,6 @@ struct FlexArray
     unsigned size_ = 0;
     T *arr_ptr_ = nullptr;
 };
-
-template <typename T>
-std::ostream &operator<<(std::ostream &out, const FlexArray<T> &original)
-{
-    for (int i = 0; i < original.Size(); ++i)
-    {
-        out << original.at(i) << " ";
-    }
-    return out;
-}
 
 template <typename T>
 FlexArray<T> operator*(unsigned n, const FlexArray<T> &original)
@@ -158,8 +153,16 @@ FlexArray<T> operator*(const FlexArray<T> &original, unsigned n)
 }
 
 template <typename T>
-FlexArray<T> operator+(const FlexArray<T> &first, const FlexArray<T> &second)
+const FlexArray<T> operator+(const FlexArray<T> &first, const FlexArray<T> &second)
 {
+    if(first.size_ == 0)
+    {
+        return second;
+    }
+    if(second.size_ == 0)
+    {
+        return first;
+    }
     unsigned size = first.Size() + second.Size();
     FlexArray<T> tmp(size);
     unsigned i = 0;
@@ -172,4 +175,15 @@ FlexArray<T> operator+(const FlexArray<T> &first, const FlexArray<T> &second)
         tmp.at(i) = second.at(j);
     }
     return tmp;
+}
+
+///////////////////
+template <typename T>
+std::ostream &operator<<(std::ostream &out, const FlexArray<T> &original)
+{
+    for (int i = 0; i < original.Size(); ++i)
+    {
+        out << original.at(i) << " ";
+    }
+    return out;
 }

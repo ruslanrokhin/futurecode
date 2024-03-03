@@ -12,6 +12,9 @@ int main()
     const FlexArray<int> Const(3);
     static_assert(!std::is_assignable_v<decltype(Const.at(3)), int>);
 
+    {
+        FlexArray<int> flex;
+    }
     FlexArray<int> flex(3);
     flex.at(0) = 1;
     flex.at(1) = 2;
@@ -47,4 +50,13 @@ int main()
         (a *= 2) *= 2;
         std::cout << a << '\n';
     }
+    {
+        FlexArray<int> a1(2);
+        FlexArray<int> a2(3);
+        FlexArray<int> a3 = a1 + a2;
+        auto a4 = a1 + a2;
+        std::cout << a3 << '\n';
+
+    }
+
 }
