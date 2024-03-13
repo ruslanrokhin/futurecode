@@ -2,22 +2,6 @@
 
 #include <iostream>
 #include <cassert>
-#include <memory.h>
-
-//#define MEMCOPY
-
-template <typename T>
-inline void my_el_cpy(T *from, T *to, unsigned count)
-{
-#ifdef MEMCOPY
-    memcpy(from, to, sizeof(T) * count);
-#else
-    for (unsigned i = 0; i < count; i++)
-    {
-        to[i] = from[i];
-    }
-#endif
-}
 
 template <typename T>
 struct FlexArray
@@ -38,7 +22,10 @@ struct FlexArray
 
     FlexArray(const FlexArray<T> &other) : size_(other.size_), reserve_(other.size_), arr_ptr_(new T[size_]())
     {
-        my_el_cpy(other.arr_ptr_, arr_ptr_, size_);
+        for (unsigned i = 0; i < size_; i++)
+        {
+            at(i) = other.at(i);
+        }
     }
 
     ~FlexArray()
@@ -87,11 +74,13 @@ struct FlexArray
     {
         if (reserve_ < reserve)
         {
-            // auto tmp_ptr = new T[reserve];
-            T *tmp_ptr = (T *)malloc(sizeof(T) * reserve);
-            my_el_cpy(tmp_ptr, arr_ptr_, size_);
+            auto tmp_ptr = new T[reserve];
+            for (size_t i = 0; i < size_; i++)
+            {
+                tmp_ptr[i] = arr_ptr_[i];
+            }
             reserve_ = reserve;
-            free(arr_ptr_);
+            delete[] arr_ptr_;
             arr_ptr_ = tmp_ptr;
             return true;
         }
@@ -101,7 +90,10 @@ struct FlexArray
     FlexArray<T> &operator=(const FlexArray<T> &second)
     {
         resize_reserve(second.Size());
-        my_el_cpy(second.arr_ptr_, arr_ptr_, second.size_);
+        for (unsigned i = 0; i < size_; i++)
+        {
+            at(i) = second.at(i);
+        }
         return *this;
     }
 
@@ -124,7 +116,10 @@ struct FlexArray
 
         set_reserve(new_size);
 
-        my_el_cpy(second.arr_ptr_, arr_ptr_ + size_, second.size_);
+        for (unsigned j = 0, i = size_; i < new_size; j++, i++)
+        {
+            at(i) = second.at(j);
+        }
         size_ = new_size;
         return *this;
     }
@@ -146,13 +141,6 @@ struct FlexArray
             }
             arr_ptr_[i] = arr_ptr_[j];
         }
-        auto tmp_ptr = arr_ptr_;
-        for (size_t i = 0; i < n; i++)
-        {
-            tmp_ptr += size_;
-            my_el_cpy(arr_ptr_, tmp_ptr, size_);
-        }
-
         size_ = new_size;
         return *this;
     }
@@ -180,12 +168,6 @@ FlexArray<T> operator*(unsigned n, const FlexArray<T> &original)
         }
         tmp.at(i) = original.at(j);
     }
-    auto tmp_ptr = tmp.arr_ptr_;
-    for (size_t i = 0; i < n; i++)
-    {
-        my_el_cpy(original.arr_ptr_, tmp_ptr, original.size_);
-        tmp_ptr += size;
-    }
     return tmp;
 }
 
@@ -209,12 +191,14 @@ const FlexArray<T> operator+(const FlexArray<T> &first, const FlexArray<T> &seco
     unsigned size = first.Size() + second.Size();
     FlexArray<T> tmp(size);
     unsigned i = 0;
-    auto tmp_ptr = tmp.arr_ptr_;
-
-    my_el_cpy(first.arr_ptr_, tmp_ptr, first.size_);
-    tmp_ptr += first.size_;
-    my_el_cpy(second.arr_ptr_, tmp_ptr, second.size_);
-
+    for (; i < first.Size(); i++)
+    {
+        tmp.at(i) = first.at(i);
+    }
+    for (unsigned j = 0; i < size; j++, i++)
+    {
+        tmp.at(i) = second.at(j);
+    }
     return tmp;
 }
 
