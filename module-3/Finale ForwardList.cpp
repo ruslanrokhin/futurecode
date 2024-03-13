@@ -1,7 +1,6 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
-using namespace std;
 struct Node
 {
     Node(Node *next, int value) : next(next), value(value)
@@ -78,7 +77,7 @@ int maxOfList(Node *first)
 }
 std::vector<int> getVectorFromList(Node *first)
 {
-    vector<int> fromList;
+   std::vector<int> fromList;
     while (first != nullptr)
     {
         fromList.push_back(first->value);
@@ -100,6 +99,34 @@ bool compareLists(Node *first1, Node *first2)
     return first1 == nullptr && first2 == nullptr;
 }
 
+class Iterator
+{
+public:
+    Node *ptr_ = nullptr;
+    Node operator()()
+    {
+        return *ptr_;
+    }
+    Iterator()
+    {
+    }
+    Iterator(Node *node_ptr) : ptr_(node_ptr)
+    {
+    }
+    Iterator &operator++()
+    {
+        ptr_ = ptr_->next;
+        return *this;
+    }
+    bool operator!=(Iterator &another)
+    {
+        return (ptr_ != another.ptr_);
+    }
+    int &operator*()
+    {
+        return ptr_->value;
+    }
+};
 class ForwardList
 {
 public:
@@ -108,9 +135,13 @@ public:
         next_ = start;
     }
     Node *next_;
-    Node *begin()
+    Iterator begin()
     {
-        return next_;
+        return Iterator(next_);
+    }
+    Iterator end()
+    {
+        return Iterator();
     }
 };
 
@@ -130,12 +161,12 @@ int main(int argc, char const *argv[])
     {
         std::cout << v << "\n";
     }
-    // Вывод / 100 / 200 / 300 pushBack(start, 4);
+    // Вывод / 100 / 200 / 300
+    pushBack(start, 4);
     for (int v : f)
     {
         std::cout << v << "\n";
     }
     // Вывод / 100 / 200 / 300 / 4
-
     deleteList(start);
 }
